@@ -32,9 +32,12 @@ venv/
 .DS_Store
 Thumbs.db
 
-# test shell scripts
+# test files
 *.sh
 ./test_bashScripts/
+./bashCopilot-doc.md
+./bashCopilot-test.md
+./bashCopilot-test.py
 
 # log file
 *.log
