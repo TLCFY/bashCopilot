@@ -35,9 +35,9 @@ Thumbs.db
 # test files
 *.sh
 ./test_bashScripts/
-./bashCopilot-doc.md
-./bashCopilot-test.md
-./bashCopilot-test.py
+bashCopilot-doc.md
+bashCopilot-test.md
+bashCopilot-test.py
 
 # log file
 *.log
