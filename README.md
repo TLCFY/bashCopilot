@@ -113,7 +113,7 @@ python bashCopilot.py -help
 
 ## 许可证
 
-MIT
+[MIT](./LICENSE)
 
 ## 作者
 
