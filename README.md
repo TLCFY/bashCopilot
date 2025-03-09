@@ -26,7 +26,7 @@ Bash-Copilot 是一个基于AI的纯命令行工具，可将自然语言转换�
 1. 克隆仓库:
 
 ```bash
-git clone https://github.com/yourusername/bash-copilot.git
+git clone https://github.com/TLCFY/bash-copilot.git
 cd bash-copilot
 ```
 
