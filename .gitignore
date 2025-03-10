@@ -46,3 +46,6 @@ bashCopilot-test.py
 # api_key
 api_key.txt
 openrouter_key.txt
+
+# VSCode workspace
+*.code-workspace
