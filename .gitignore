@@ -39,6 +39,8 @@ Thumbs.db
 bashCopilot-doc.md
 bashCopilot-test.md
 bashCopilot-test.py
+testBC.py
+ai-update.md
 
 # log file
 *.log

@@ -15,9 +15,6 @@ $ bcopilot -help  # 显示帮助信息
 """
 
 
-#FIXME: -filename 无法独立使用，需要和 -script 一起使用
-#TODO: 在调用-filename时调用统计token的函数
-#TODO: 当输入统计token超过6000token时，向用户确认是否继续。
 import os
 import sys
 import json
