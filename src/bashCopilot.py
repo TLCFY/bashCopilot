@@ -28,8 +28,8 @@ from datetime import datetime
 SCRIPT_DIR = Path(__file__).parent.absolute()
 
 # 配置信息
-API_KEY_FILE = os.path.join(SCRIPT_DIR, "api_key.txt")  # 硅基流动API密钥存储文件
-OPENROUTER_KEY_FILE = os.path.join(SCRIPT_DIR, "openrouter_key.txt")  # OpenRouter API密钥存储文件
+API_KEY_FILE = os.path.join(SCRIPT_DIR.parent, "config", "api_key.txt")  # 硅基流动API密钥存储文件
+OPENROUTER_KEY_FILE = os.path.join(SCRIPT_DIR.parent, "config", "openrouter_key.txt")  # OpenRouter API密钥存储文件
 
 # API端点配置
 SILICONFLOW_API_URL = "https://api.siliconflow.cn/v1/chat/completions"  # 硅基流动API端点
@@ -46,7 +46,7 @@ MODEL_TOKEN_LIMITS = {
 }
 
 # 历史记录文件
-HISTORY_FILE = os.path.join(SCRIPT_DIR, "bcopilot_history.log")
+HISTORY_FILE = os.path.join(SCRIPT_DIR.parent, "logs", "bcopilot_history.log")
 
 
 def estimate_tokens(text: str) -> int:
