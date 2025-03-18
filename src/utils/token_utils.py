@@ -3,6 +3,33 @@
 Token 相关工具函数
 """
 
+from src.config.model_manager import ModelManager
+
+def get_model_token_limit(model_name: str) -> int:
+    """
+    获取指定模型的token限制
+    
+    Args:
+        model_name (str): 模型名称
+    
+    Returns:
+        int: 模型的token限制
+    """
+    manager = ModelManager()
+    token_limits = manager.get_model_token_limits()
+    
+    # 如果找到精确匹配，直接返回
+    if model_name in token_limits:
+        return token_limits[model_name]
+    
+    # 如果没有精确匹配，尝试部分匹配
+    for model, limit in token_limits.items():
+        if model_name in model or model in model_name:
+            return limit
+    
+    # 默认值
+    return 100000
+
 def estimate_tokens(text: str) -> int:
     """
     估算文本的tokens数量

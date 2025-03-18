@@ -1,0 +1,47 @@
+# Bash-Copilot模型配置模板
+# 复制此文件并按照您的需求修改
+
+# 命令生成配置示例
+command:
+  provider: "your_provider"  # 当前使用的提供商
+  
+  models:
+    # OpenAI配置示例
+    openai:
+      url: "https://api.openai.com/v1/chat/completions"
+      model: "gpt-4o"
+      token_limit: 128000
+      key_file: "config/api/openai_key.txt"
+    
+    # Azure OpenAI配置示例
+    azure:
+      url: "https://<your-endpoint>.openai.azure.com/openai/deployments/<deployment-name>/chat/completions?api-version=2023-05-15"
+      model: "gpt-4"
+      token_limit: 128000
+      key_file: "config/api/azure_key.txt"
+    
+    # 百度文心配置示例
+    baidu:
+      url: "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions"
+      model: "ernie-4.0"
+      token_limit: 32000
+      key_file: "config/api/baidu_key.txt"
+
+# 脚本生成配置示例
+script:
+  provider: "your_provider"  # 当前使用的提供商
+  
+  models:
+    # Anthropic配置示例
+    anthropic:
+      url: "https://api.anthropic.com/v1/messages"
+      model: "claude-3-opus-20240229"
+      token_limit: 180000
+      key_file: "config/api/anthropic_key.txt"
+    
+    # OpenRouter配置示例
+    openrouter:
+      url: "https://openrouter.ai/api/v1/chat/completions"
+      model: "anthropic/claude-3.7-sonnet"
+      token_limit: 180000
+      key_file: "config/api/openrouter_key.txt"

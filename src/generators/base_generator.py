@@ -7,12 +7,6 @@ import json
 import requests
 from typing import Dict, Tuple, List, Optional
 
-from config.api.endpoints import (
-    COMMAND_API_URL,
-    SCRIPT_API_URL,
-    COMMAND_MODEL,
-    SCRIPT_MODEL
-)
 from config.prompts import (
     SCRIPT_PROMPT_TEMPLATE,
     COMMAND_PROMPT_TEMPLATE,
@@ -20,7 +14,7 @@ from config.prompts import (
     SCRIPT_FILE_SUFFIX,
     COMMAND_FILE_SUFFIX
 )
-from src.utils.api_key import read_api_key
+from src.config.model_manager import ModelManager
 
 def generate_bash_command(query: str, context: Dict[str, str], 
                           is_script: bool = False,
@@ -37,20 +31,23 @@ def generate_bash_command(query: str, context: Dict[str, str],
     Returns:
         Tuple[bool, str]: (是否成功, 生成的bash命令或错误消息)
     """
-    # 根据需求选择不同的API和模型
+    # 获取配置
+    model_manager = ModelManager()
+    
     if is_script:
-        # 脚本生成使用OpenRouter的Claude 3.7 Sonnet
-        api_url = SCRIPT_API_URL
-        model = SCRIPT_MODEL
-        api_key = read_api_key(is_openrouter=True)
-        print("正在使用 Claude 3.7 Sonnet 模型生成脚本，可能需要1-2分钟，请等待。")
+        # 脚本生成
+        provider_config = model_manager.get_script_provider()
         timeout = 120
+        print(f"正在使用 {provider_config['model']} 模型生成脚本，可能需要1-2分钟...")
     else:
-        # 命令生成使用硅基流动的DeepSeek-V3
-        api_url = COMMAND_API_URL
-        model = COMMAND_MODEL
-        api_key = read_api_key(is_openrouter=False)
+        # 命令生成  
+        provider_config = model_manager.get_command_provider()
         timeout = 30
+    
+    # 获取API密钥
+    api_key = model_manager.get_api_key(provider_config["key_file"])
+    if not api_key:
+        return False, f"未找到API密钥，请检查 {provider_config['key_file']}"
 
     # 构建提示词
     if is_script:
@@ -93,16 +90,17 @@ def generate_bash_command(query: str, context: Dict[str, str],
             prompt_text += COMMAND_FILE_SUFFIX
 
     try:
-        if is_script:
-            # OpenRouter请求 - 按照Claude 3.7 Sonnet的正确格式
+        # 处理特殊提供商: OpenRouter
+        if "openrouter" in provider_config["url"]:
+            # OpenRouter请求头
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {api_key}",
                 "HTTP-Referer": "https://bash-copilot.local",
                 "X-Title": "Bash-Copilot"
             }
-        
-            # 使用Claude 3.7 Sonnet的消息格式
+            
+            # OpenRouter使用Claude格式
             messages = [
                 {
                     "role": "user",
@@ -114,41 +112,37 @@ def generate_bash_command(query: str, context: Dict[str, str],
                     ]
                 }
             ]
-        
-            # OpenRouter特定的请求格式
+            
             payload = {
-                "model": model,
+                "model": provider_config["model"],
                 "messages": messages,
                 "temperature": 0.2,
                 "max_tokens": 4000
             }
-        
-            # 发送请求并使用json.dumps确保正确的JSON格式
-            response = requests.post(
-                url=api_url,
-                headers=headers,
-                data=json.dumps(payload),
-                timeout=timeout
-            )
-        
+            
         else:
-            # 硅基流动请求
+            # 标准OpenAI兼容格式
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {api_key}"
             }
-        
-            # 标准的OpenAI格式消息
+            
             messages = [{"role": "user", "content": prompt_text}]
-        
+            
             payload = {
-                "model": model,
+                "model": provider_config["model"],
                 "messages": messages,
-                "temperature": 0.1,
-                "max_tokens": 200
+                "temperature": 0.1 if not is_script else 0.2,
+                "max_tokens": 200 if not is_script else 4000
             }
         
-            response = requests.post(api_url, headers=headers, json=payload, timeout=timeout)
+        # 发送请求
+        response = requests.post(
+            url=provider_config["url"],
+            headers=headers,
+            json=payload,
+            timeout=timeout
+        )
     
         # 检查响应状态
         if response.status_code != 200:

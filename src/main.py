@@ -5,12 +5,15 @@ Bash-Copilot: 将自然语言转换为bash命令的命令行工具
 环境要求:
 - Python 3.6+
 - requests库
+- pyyaml库
 - Ubuntu 20.04
 
 用法:
 $ bcopilot "如何查找最大的5个文件"     # 仅生成单行命令
 $ bcopilot -script "如何查找系统中的大文件"  # 生成完整脚本
 $ bcopilot -filename file1.txt file2.json "处理这些文件"  # 包含文件内容作为上下文
+$ bcopilot config show  # 显示当前配置
+$ bcopilot config set command.openai  # 切换模型提供商
 $ bcopilot -help  # 显示帮助信息
 """
 
@@ -19,7 +22,7 @@ import sys
 import json
 from typing import Dict, Tuple, List, Optional
 
-from config.api.endpoints import COMMAND_MODEL, SCRIPT_MODEL, MODEL_TOKEN_LIMITS
+from src.config.model_manager import ModelManager
 from src.cli.parser import parse_arguments
 from src.utils.context import get_bash_context
 from src.utils.file_utils import read_file_contents
@@ -29,7 +32,13 @@ from src.generators.script_generator import handle_script_generation
 def main():
     # 解析命令行参数
     args = parse_arguments()
-
+    
+    # 处理配置命令
+    if args.command == "config":
+        from src.cli.config_commands import handle_config_command
+        handle_config_command(args)
+        return
+    
     # 获取bash环境上下文
     context = get_bash_context()
 

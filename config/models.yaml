@@ -1,0 +1,29 @@
+# Bash-Copilot模型配置
+
+# 命令生成配置
+command:
+  # 当前使用的提供商
+  provider: "siliconflow"
+  
+  # 模型配置
+  models:
+    # 硅基流动配置
+    siliconflow:
+      url: "https://api.siliconflow.cn/v1/chat/completions"
+      model: "Pro/deepseek-ai/DeepSeek-V3"
+      token_limit: 128000
+      key_file: "config/api/siliconflow_key.txt"
+
+# 脚本生成配置
+script:
+  # 当前使用的提供商
+  provider: "openrouter"
+  
+  # 模型配置  
+  models:
+    # OpenRouter配置
+    openrouter:
+      url: "https://openrouter.ai/api/v1/chat/completions"
+      model: "anthropic/claude-3.7-sonnet"
+      token_limit: 180000
+      key_file: "config/api/openrouter_key.txt"
