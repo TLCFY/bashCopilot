@@ -46,7 +46,7 @@ ai-update.md
 *.log
 
 # api_key
-api_key.txt
+siliconflow_key.txt
 openrouter_key.txt
 
 # VSCode workspace

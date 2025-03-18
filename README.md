@@ -1,4 +1,3 @@
-
 # Bash-Copilot
 
 Bash-Copilot 是一个基于AI的纯命令行工具，可将自然语言转换为bash命令或脚本。支持生成单行命令和完整的shell脚本，并且能够根据指定文件内容提供上下文相关的命令生成。
@@ -27,59 +26,90 @@ Bash-Copilot 是一个基于AI的纯命令行工具，可将自然语言转换�
 
 ```bash
 git clone https://github.com/TLCFY/bashCopilot.git
-cd bash-copilot
+cd bashCopilot
 ```
 
-2. 安装依赖:
+2. 创建并激活虚拟环境 (可选):
+
+```bash
+python -m venv bashCopilot-env
+source bashCopilot-env/bin/activate
+```
+
+3. 安装依赖:
 
 ```bash
 pip install requests
 ```
 
-3. 配置API密钥:
+4. 配置API密钥:
 
 ```bash
 # 创建并编辑硅基流动API密钥文件
-echo "your_siliconflow_api_key" > api_key.txt
+echo "your_siliconflow_api_key" > config/api_key.txt
 
 # 创建并编辑OpenRouter API密钥文件
-echo "your_openrouter_api_key" > openrouter_key.txt
+echo "your_openrouter_api_key" > config/openrouter_key.txt
 ```
 
 ## 使用方法
 
-### 基本用法
+### 使用命令行入口
 
-生成单行命令:
 ```bash
-python bashCopilot.py "查找当前目录下最大的5个文件"
+# 生成单行命令
+./src/bcopilot.py "查找当前目录下最大的5个文件"
+
+# 生成完整脚本
+./src/bcopilot.py -script "备份home目录下的所有.conf文件"
+
+# 使用文件内容作为上下文
+./src/bcopilot.py -filename config.json data.log "分析这些文件"
+
+# 显示帮助信息
+./src/bcopilot.py -help
 ```
 
-生成完整脚本:
-```bash
-python bashCopilot.py -script "备份home目录下的所有.conf文件"
-```
-
-### 使用文件内容作为上下文
+### 直接使用主模块
 
 ```bash
-python bashCopilot.py -filename config.json data.log "分析这些文件"
-```
+# 生成单行命令
+python src/main.py "查找当前目录下最大的5个文件"
 
-### 帮助信息
-
-```bash
-python bashCopilot.py -help
+# 生成完整脚本
+python src/main.py -script "备份home目录下的所有.conf文件"
 ```
 
 ## 项目结构
 
 ```
 .
-├── bashCopilot.py      # 主程序文件
-├── api_key.txt         # 硅基流动API密钥配置
-├── openrouter_key.txt  # OpenRouter API密钥配置
-└── bcopilot_history.log # 历史记录文件
+├── config/                  # 配置目录
+│   ├── api/                 # API相关配置
+│   │   └── endpoints.py     # API端点配置
+│   ├── constants.py         # 常量定义
+│   ├── prompts.py           # 提示词模板
+├── docs/                    # 文档目录
+├── logs/                    # 日志目录
+├── src/                     # 源代码目录
+│   ├── cli/                 # 命令行接口
+│   │   └── parser.py        # 命令行参数解析
+│   ├── generators/          # 生成器模块
+│   │   ├── base_generator.py     # 基础生成器
+│   │   ├── command_generator.py  # 命令生成器
+│   │   └── script_generator.py   # 脚本生成器
+│   ├── log/                 # 日志模块
+│   │   └── history.py       # 历史记录功能
+│   ├── utils/               # 工具函数
+│   │   ├── api_key.py       # API密钥处理
+│   │   ├── context.py       # 上下文处理
+│   │   ├── file_utils.py    # 文件处理
+│   │   └── token_utils.py   # Token估算
+│   ├── bcopilot.py          # 命令行入口脚本
+│   ├── main.py              # 主程序入口
+│   └── bashCopilot.py       # 旧版主程序
+├── tests/                   # 测试目录
+└── bashCopilot-env/         # 虚拟环境目录
 ```
 
 ## 模型说明
@@ -87,15 +117,22 @@ python bashCopilot.py -help
 - 单行命令生成: 使用 DeepSeek-V3 (硅基流动)
 - 脚本生成: 使用 Claude 3.7 Sonnet (OpenRouter)
 
-## 当前功能限制
+## 开发说明
 
-- `-filename` 参数目前只能与 `-script` 参数一起使用，使用时请先指定 `-script` 参数
-- 仅支持读取文本文件，其他格式的文件可能无法处理
+项目正在进行模块化重构，将功能拆分到不同模块以提高代码可维护性：
+
+- 命令行解析模块 (cli/parser.py) 处理参数解析
+- 生成器模块 (generators/) 负责生成命令和脚本
+- 日志模块 (log/) 管理历史记录
+- 工具模块 (utils/) 提供各种辅助功能
+
+## 功能限制
+
 - 读取文件时，文件内容会被转换为字符串，可能会导致格式丢失
 - 文件内容的token数量有限制，过大的文件可能无法处理
 - 仅支持Linux/Unix环境下的bash命令生成
 - 计划未来打包至pip安装
-- 计划分离API密钥和相应的模型请求格式
+- 计划支持更多模型配置选项
 
 ## 贡献指南
 
